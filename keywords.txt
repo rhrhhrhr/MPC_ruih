@@ -1,0 +1,35 @@
+#######################################
+# Syntax Coloring Map For MPC Library
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+MPC	      KEYWORD1
+Matrix      KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+Solver      KEYWORD2
+getRow	KEYWORD2
+getCol	KEYWORD2
+Print 	KEYWORD2
+MaxVal	KEYWORD2
+EuProj	KEYWORD2
+Trans 	KEYWORD2
+Inv   	KEYWORD2
++     	KEYWORD2
+-     	KEYWORD2
+*     	KEYWORD2
+=     	KEYWORD2
+()          KEYWORD2
+>=          KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+MAXSIZE	LITERAL1
