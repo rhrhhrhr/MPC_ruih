@@ -6,8 +6,9 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-MPC	      KEYWORD1
-Matrix      KEYWORD1
+MPC	             KEYWORD1
+Matrix             KEYWORD1
+MatDataType_t      KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -20,13 +21,7 @@ Print 	KEYWORD2
 MaxVal	KEYWORD2
 EuProj	KEYWORD2
 Trans 	KEYWORD2
-Inv   	KEYWORD2
-+     	KEYWORD2
--     	KEYWORD2
-*     	KEYWORD2
-=     	KEYWORD2
-()          KEYWORD2
->=          KEYWORD2
+Inv         KEYWORD2
 
 #######################################
 # Constants (LITERAL1)

@@ -4,8 +4,8 @@ void setup() {
 // write your initialization code here
     Serial.begin(115200);
 
-    float arr1[4] = {1, 2, 3, 4};
-    float arr2[4] = {2, 3, 5, 3};
+    MatDataType_t arr1[4] = {1, 2, 3, 4};
+    MatDataType_t arr2[4] = {2, 3, 5, 3};
 
     Matrix mat1 = Matrix(2, 2);
     Matrix mat2 = Matrix(4, 1);

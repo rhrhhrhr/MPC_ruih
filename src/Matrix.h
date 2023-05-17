@@ -5,41 +5,50 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include <Arduino.h>
-#define MaxSize 15  // 因为求解优化需要大量读写操作, 使用vector容器或动态内存速度相较传统数组会很慢, 而使用了
-                    // 一个大小固定的数组, 若数组大小不够, 可以修改这个值
+#include "MPCConfig.h"
 
+// 矩阵类及相关运算
+// Matrix class and related operations
 class Matrix {
 private:
-    uint32_t row, column;
-    float data[MaxSize] = {0};
+    uint32_t row, column;             // 矩阵的行和列
+    MatDataType_t data[MAXSIZE] = {};      // 矩阵的数据
+
+    // 矩阵初等变换
+    void RowExchange(uint32_t , uint32_t);
+    void RowMul(uint32_t , MatDataType_t);
+    void RowAdd(uint32_t , uint32_t , MatDataType_t);
 
 public:
+    // 矩阵初始化
+    // Matrix initialization
     Matrix();
     Matrix(uint32_t , uint32_t);
 
+    // 获取矩阵信息
+    // Get matrix information
+    void Print();
+
+    bool operator>= (MatDataType_t);
+
     uint32_t getRow() const;
     uint32_t getCol() const;
+    MatDataType_t operator() (uint32_t, uint32_t);
 
-    void Print();
-    float MaxVal();
-    Matrix EuProj();
+    MatDataType_t MaxVal();
+    Matrix NonNegProj();
 
+    // 矩阵的基本运算
+    // Basic Operations of Matrix
     Matrix Trans();
     Matrix Inv();
-    void RowExchange(uint32_t , uint32_t);
-    void RowMul(uint32_t , float);
-    void RowAdd(uint32_t , uint32_t , float);
 
     Matrix operator+ (const Matrix&);
     Matrix operator- (const Matrix&);
     Matrix operator* (const Matrix&);
-    Matrix operator* (float);
+    Matrix operator* (MatDataType_t);
     Matrix& operator= (const Matrix&);
-    Matrix& operator= (float*);
-    float operator() (uint32_t, uint32_t);
-
-    bool operator>= (float);
+    Matrix& operator= (MatDataType_t*);
 };
 
 #endif //MATRIX_H
