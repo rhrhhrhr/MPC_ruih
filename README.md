@@ -10,7 +10,7 @@ MatDataType_t L_phi, epsilon_V, epsilon_g;
 uint32_t max_iter, N;
 Matrix A, B, Q, R, QN, F, G, c, FN, cN;
 ```
-The `L_phi` here is the Lipschitz constant for the gradient of the dual problem of the MPC optimizition problem dual. It is used for updating the dual varible y according to the Nesterov’s Accelerated Gradient Descent method. It is better to calculate it in advance. The corresponding code about how to calculate it in python will be uploaded later. For more details you can refer to the article [*An Accelerated Dual Gradient-Projection Algorithm for Embedded Linear Model Predictive Control*](https://ieeexplore.ieee.org/document/6426458).<br><br>
+The `L_phi` here is the Lipschitz constant for the gradient of the dual problem of the MPC optimizition problem dual. It is used for updating the dual varible y according to the Nesterov’s Accelerated Gradient Descent method. It is better to calculate it in advance. The corresponding code about how to calculate it in python has been uploaded in [MPC_ruih_MPCSetup](https://github.com/rhrhhrhr/MPC_ruih_MPCSetup). For more details you can refer to the article [*An Accelerated Dual Gradient-Projection Algorithm for Embedded Linear Model Predictive Control*](https://ieeexplore.ieee.org/document/6426458).<br><br>
 The `epsilon_V` and the `epsilon_g` here are the tolerances of the error between optimal cost and real cost and the violation of constraints respectively. Note that the tolerances not only describe the absolute error, but also describe the relative error sometimes. This depends on the specific situation.<br><br>
 The `max_iter` is the maximum number of the solving step.<br><br>
 The `N` is the prediction horizon of the MPC controller.<br><br>
