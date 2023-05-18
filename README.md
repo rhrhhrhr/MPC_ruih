@@ -4,6 +4,12 @@ Arduino library for linear MPC controller.
 This algorithm refers to the article [*`An Accelerated Dual Gradient-Projection Algorithm for Embedded Linear Model Predictive Control`*](https://ieeexplore.ieee.org/document/6426458) by Panagiotis Patrinos and Alberto Bemporad. You can read the [article](https://ieeexplore.ieee.org/document/6426458) for more details.
 ## Usage
 Please see [matrixTest](https://github.com/rhrhhrhr/MPC_ruih/blob/main/examples/matrixTest/matrixTest.ino) if you want to know how to use the Matrix class and see [mpcTest](https://github.com/rhrhhrhr/MPC_ruih/blob/main/examples/mpcTest/mpcTest.ino) for MPC class.
+### Parameters of the Matrix class
+```cpp
+uint32_t row, column;             // row and column of matrix 矩阵的行和列
+MatDataType_t data[MAXSIZE] = {};      // data of matrix 矩阵的数据
+```
+The data of the matrix is stored in a fixed length array 'data[MAXSIZE]'. You could modify the `MAXSIZE` in [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h).
 ### Initialize a matrix
 You can initialize a matrix in four ways, without parameters, with row and column, by an array or by another matrix.
 #### Without parameters
@@ -111,6 +117,8 @@ Matrix `F`, `G`, `c` describe the state and input constraints $$Fx_k + Gu_k \le 
 Matrix `FN`, `cN` describe the terminal constraints $$F_Nx_N \le c_N$$
 ## Note
 Considering the real-time requirements of the algorithm, the data of the matrix is stored in a fixed length array rather than vector container. If larger matrix operations are needed, you can modify the `MAXSIZE` in the [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h) file, which is the maximum number of matrix elements. In addition, you can also determine whether the data type of the matrix is float or double through the `SINGLE_PRECISION` and `DOUBLE_PRECISION` in the [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h) file.
+### Initialize a MPC controller
+You can use the python package LinearMPCFactor in repo [MPC_ruih_MPCSetup](https://github.com/rhrhhrhr/MPC_ruih_MPCSetup) to generate the setup code for a MPC controller.
 ## Licence
 MIT
 ## Author
