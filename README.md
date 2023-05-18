@@ -19,7 +19,7 @@ Matrix `Q`, `R`, `QN` describe the cost function of the MPC controller $$V(X, U)
 Matrix `F`, `G`, `c` describe the state and input constraints $$Fx_k + Gu_k \le c$$<br><br>
 Matrix `FN`, `cN` describe the terminal constraints $$F_Nx_N \le c_N$$
 ### Initialize a matrix
-You initialize a matrix in four ways, without parameters, with row and column, by an array or by another matrix.
+You can initialize a matrix in four ways, without parameters, with row and column, by an array or by another matrix.
 #### Without parameters
 This operation will generate an all zero matrix with one row and one column 
 ```cpp
