@@ -11,7 +11,7 @@ MatDataType_t data[MAXSIZE] = {};      // data of matrix 矩阵的数据
 ```
 The data of the matrix is stored in a fixed length array `data[MAXSIZE]`. You could modify the `MAXSIZE` in [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h).
 ### Initialize a matrix
-You can initialize a matrix in four ways, without parameters, with row and column, by an array or by another matrix.
+You can initialize a matrix in four ways: without parameters, with row and column, by an array or by another matrix.
 #### Without parameters
 This operation will generate an all zero matrix with one row and one column<br><br>
 **code:**
