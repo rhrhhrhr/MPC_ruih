@@ -12,7 +12,7 @@ Matrix A, B, Q, R, QN, F, G, c, FN, cN;
 Matrix * K, * D, * M, * L, * C;
 Matrix * y, * y_p, * w, * x, * u, * x_bar, * u_bar, * x_bar_p, * u_bar_p;
 ```
-The `L_phi` here is the Lipschitz constant for the gradient of the dual problem of the MPC optimizition problem dual. It is used for updating the dual varible y according to the Nesterov’s Accelerated Gradient Descent method. It is better to calculate it in advance. The corresponding code about how to calculate it in python will be uploaded later. For more details you can refer to the article [*`An Accelerated Dual Gradient-Projection Algorithm for Embedded Linear Model Predictive Control`*](https://ieeexplore.ieee.org/document/6426458).<br>
+The `L_phi` here is the Lipschitz constant for the gradient of the dual problem of the MPC optimizition problem dual. It is used for updating the dual varible y according to the Nesterov’s Accelerated Gradient Descent method. It is better to calculate it in advance. The corresponding code about how to calculate it in python will be uploaded later. For more details you can refer to the article [*`An Accelerated Dual Gradient-Projection Algorithm for Embedded Linear Model Predictive Control`*](https://ieeexplore.ieee.org/document/6426458).<br><br>
 The `epsilon_V` and the `epsilon_g` here are the tolerances of the `error between optimal cost and real cost` and the `violation of constraints` respectively. Note that the tolerances not only describe the absolute error, but also describe the relative error sometimes. This depends on the specific situation.
 Matrix A, B describe the system's state space equation $$x_(k+1) = Ax_k + Bu_k$$.
 Matrix Q, R, QN describe the cost function of the MPC controller $$V(X, U) = \sum\limits{i=0}^N-1$$
