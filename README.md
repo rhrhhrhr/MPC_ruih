@@ -21,37 +21,44 @@ Matrix `FN`, `cN` describe the terminal constraints $$F_Nx_N \le c_N$$
 ### Initialize a matrix
 You can initialize a matrix in four ways, without parameters, with row and column, by an array or by another matrix.
 #### Without parameters
-This operation will generate an all zero matrix with one row and one column 
+This operation will generate an all zero matrix with one row and one column<br>
+code:
 ```cpp
 Matrix mat;
 mat.Print();
 ```
+result:
 ```cpp
 0
 ```
 #### With row and column
-This operation will generate an all zero matrix with the corresponding row and column
+This operation will generate an all zero matrix with the corresponding row and column<br>
+code:
 ```cpp
 Matrix mat = Matrix(2, 2);
 mat.Print();
 ```
+result:
 ```cpp
 0 0 
 0 0 
 ```
 #### By an array
-This operation will push the data in array into matrix. 
+This operation will push the data in array into matrix.<br>
+code:
 ```cpp
 MatDataType_t arr[4] = {1, 2, 3, 4};
 Matrix mat = Matrix(2, 2);
 mat = arr;
 mat.Print();
 ```
+result:
 ```cpp
 1 2 
 3 4 
 ```
-Note that this method should be used after declare the matrix's row and column, or the assignment won't success. The same data with different row and column will represent different matrices.
+Note that this method should be used after declare the matrix's row and column, or the assignment won't success. The same data with different row and column will represent different matrices.<br>
+code:
 ```cpp
 MatDataType_t arr[4] = {1, 2, 3, 4};
 Matrix mat1 = Matrix(2, 2);
@@ -61,6 +68,7 @@ mat2 = arr;
 mat1.Print();
 mat2.Print();
 ```
+result:
 ```cpp
 1 2 
 3 4 
@@ -71,7 +79,8 @@ mat2.Print();
 4 
 ```
 #### By another matrix
-This operation will copy the row, column and data of another matrix.
+This operation will copy the row, column and data of another matrix.<br>
+code:
 ```cpp
 MatDataType_t arr[4] = {1, 2, 3, 4};
 Matrix mat1 = Matrix(2, 2);
@@ -84,6 +93,7 @@ mat2 = mat1;
 mat1.Print;
 mat2.Print
 ```
+result:
 ```cpp
 0 0 
 0 0 
