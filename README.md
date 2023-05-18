@@ -19,14 +19,85 @@ Matrix `Q`, `R`, `QN` describe the cost function of the MPC controller $$V(X, U)
 Matrix `F`, `G`, `c` describe the state and input constraints $$Fx_k + Gu_k \le c$$<br><br>
 Matrix `FN`, `cN` describe the terminal constraints $$F_Nx_N \le c_N$$
 ### Initialize a matrix
-You initialize a matrix in four ways, without parameters, with row and column, with an array or with another matrix.
+You initialize a matrix in four ways, without parameters, with row and column, by an array or by another matrix.
 #### Without parameters
+This operation will generate an all zero matrix with one row and one column 
 ```cpp
 Matrix mat;
+mat.Print();
 ```
-This operation will generate a matrix 
 ```cpp
 0
+```
+#### With row and column
+This operation will generate an all zero matrix with the corresponding row and column
+```cpp
+Matrix mat = Matrix(2, 2);
+mat.Print();
+```
+```cpp
+0 0 
+0 0 
+```
+#### By an array
+This operation will push the data in array into matrix. 
+```cpp
+MatDataType_t arr[4] = {1, 2, 3, 4};
+Matrix mat = Matrix(2, 2);
+mat = arr;
+mat.Print();
+```
+```cpp
+1 2 
+3 4 
+```
+Note that this method should be used after declare the matrix's row and column, or the assignment won't success. The same data with different row and column will represent different matrices.
+```cpp
+MatDataType_t arr[4] = {1, 2, 3, 4};
+Matrix mat1 = Matrix(2, 2);
+Matrix mat2 = Matrix(4, 1);
+mat1 = arr;
+mat2 = arr;
+mat1.Print();
+mat2.Print();
+```
+```cpp
+1 2 
+3 4 
+
+1 
+2 
+3 
+4 
+```
+#### By another matrix
+This operation will copy the row, column and data of another matrix.
+```cpp
+MatDataType_t arr[4] = {1, 2, 3, 4};
+Matrix mat1 = Matrix(2, 2);
+Matrix mat2 = Matrix(4, 1);
+mat1.Print();
+mat2.Print();
+
+mat1 = arr;
+mat2 = mat1;
+mat1.Print;
+mat2.Print
+```
+```cpp
+0 0 
+0 0 
+
+0 
+0 
+0 
+0 
+
+1 2 
+3 4 
+
+1 2 
+3 4 
 ```
 ## Note
 Considering the real-time requirements of the algorithm, the data of the matrix is stored in a fixed length array rather than vector container. If larger matrix operations are needed, you can modify the `MAXSIZE` in the [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h) file, which is the maximum number of matrix elements. In addition, you can also determine whether the data type of the matrix is float or double through the `SINGLE_PRECISION` and `DOUBLE_PRECISION` in the [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h) file.
