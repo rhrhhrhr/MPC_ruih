@@ -14,9 +14,9 @@ The `L_phi` here is the Lipschitz constant for the gradient of the dual problem 
 The `epsilon_V` and the `epsilon_g` here are the tolerances of the error between optimal cost and real cost and the violation of constraints respectively. Note that the tolerances not only describe the absolute error, but also describe the relative error sometimes. This depends on the specific situation.<br><br>
 The `max_iter` is the maximum number of the solving step.<br><br>
 The `N` is the prediction horizon of the MPC controller.<br><br>
-Matrix `A`, `B` describe the system's state space equation $$x_{k+1} = Ax_k + Bu_k$$<br><br>
-Matrix `Q`, `R`, `QN` describe the cost function of the MPC controller $$V(X, U) = \sum\limits_{k=0}^{N-1}(x_k^TQx_k + u_k^TRu_k) + x_N^TQ_Nx_N$$<br><br>
-Matrix `F`, `G`, `c` describe the state and input constraints $$Fx_k + Gu_k \le c$$<br><br>
+Matrix `A`, `B` describe the system's state space equation $$x_{k+1} = Ax_k + Bu_k$$
+Matrix `Q`, `R`, `QN` describe the cost function of the MPC controller $$V(X, U) = \sum\limits_{k=0}^{N-1}(x_k^TQx_k + u_k^TRu_k) + x_N^TQ_Nx_N$$
+Matrix `F`, `G`, `c` describe the state and input constraints $$Fx_k + Gu_k \le c$$
 Matrix `FN`, `cN` describe the terminal constraints $$F_Nx_N \le c_N$$
 ### Initialize a matrix
 You can initialize a matrix in four ways, without parameters, with row and column, by an array or by another matrix.
