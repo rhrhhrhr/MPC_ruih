@@ -107,10 +107,10 @@ MatDataType_t L_phi, epsilon_V, epsilon_g;
 uint32_t max_iter, N;
 Matrix A, B, Q, R, QN, F, G, c, FN, cN;
 ```
-The `L_phi` here is the Lipschitz constant of the $\nabla\Psi$. Here the $\Psi$ is the dual problem of the MPC optimizition problem. It is used for updating the dual varible y according to the Nesterov’s Accelerated Gradient Descent method. It is better to calculate it in advance. The corresponding code about how to calculate it in python has been uploaded in repo [MPC_ruih_MPCSetup](https://github.com/rhrhhrhr/MPC_ruih_MPCSetup). For more details you can refer to the article [*An Accelerated Dual Gradient-Projection Algorithm for Embedded Linear Model Predictive Control*](https://ieeexplore.ieee.org/document/6426458).<br><br>
-The `epsilon_V` and the `epsilon_g` here are the tolerances of the error between optimal cost and real cost and the violation of constraints respectively. Note that the tolerances not only describe the absolute error, but also describe the relative error sometimes. This depends on the specific situation.<br><br>
-The `max_iter` is the maximum number of the solving step.<br><br>
-The `N` is the prediction horizon of the MPC controller.<br><br>
+Parameter `L_phi` here is the Lipschitz constant of the $\nabla\Psi$. Here the $\Psi$ is the dual problem of the MPC optimizition problem. It is used for updating the dual varible y according to the Nesterov’s Accelerated Gradient Descent method. It is better to calculate it in advance. The corresponding code about how to calculate it in python has been uploaded in repo [MPC_ruih_MPCSetup](https://github.com/rhrhhrhr/MPC_ruih_MPCSetup). For more details you can refer to the article [*An Accelerated Dual Gradient-Projection Algorithm for Embedded Linear Model Predictive Control*](https://ieeexplore.ieee.org/document/6426458).<br><br>
+Parameters `epsilon_V` and `epsilon_g` here are the tolerances of the error between optimal cost and real cost and the violation of constraints respectively. Note that the tolerances not only describe the absolute error, but also describe the relative error sometimes. This depends on the specific situation.<br><br>
+Parameter `max_iter` is the maximum number of the solving step.<br><br>
+Parameter `N` is the prediction horizon of the MPC controller.<br><br>
 Matrix `A`, `B` describe the system's state space equation $$x_{k+1} = Ax_k + Bu_k$$
 Matrix `Q`, `R`, `QN` describe the cost function of the MPC controller $$V(X, U) = \sum\limits_{k=0}^{N-1}(x_k^TQx_k + u_k^TRu_k) + x_N^TQ_Nx_N$$
 Matrix `F`, `G`, `c` describe the state and input constraints $$Fx_k + Gu_k \le c$$
