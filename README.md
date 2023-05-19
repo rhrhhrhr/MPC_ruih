@@ -36,7 +36,7 @@ mat.Print();
 0 0 
 ```
 #### By an array
-This operation will push the data in array into matrix.<br><br>
+This operation will push the data of the array into the matrix.<br><br>
 **code:**
 ```cpp
 MatDataType_t arr[4] = {1, 2, 3, 4};
@@ -49,7 +49,7 @@ mat.Print();
 1 2 
 3 4 
 ```
-Note that this method should be used after declaring the matrix's row and column, or the assignment won't success. The same data with different row and column will represent different matrices.<br><br>
+Note that this method should be used after declaring the matrix's row and column, or the assignment won't success. The same data with different rows and columns will represent different matrices.<br><br>
 **code:**
 ```cpp
 MatDataType_t arr[4] = {1, 2, 3, 4};
