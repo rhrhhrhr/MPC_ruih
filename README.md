@@ -134,14 +134,25 @@ if __name__ == '__main__':
     A_u = np.array([[1, 0], [-1, 0], [0, 1], [0, -1]])  # input constraints A_u @ u_k <= b_u 输入约束 A_u @ u_k <= b_u
     b_u = np.array([1, 1, 1, 1])
 
-    mpc = lMf.LinearMPCFactor(A, B, Q, R, 5, A_x, b_x, A_u, b_u)
+    N = 5  # prediction horizon 预测区间
+
+    mpc = lMf.LinearMPCFactor(A, B, Q, R, N, A_x, b_x, A_u, b_u)  # print the cpp code for initializing a MPC class 打印出初始化MPC类的cpp代码
 
     # mpc.decPlace = 4  # This is the number of decimal places reserved for matrix data, which defaults to 6 decimal places 这是矩阵数据保留的小数位数，默认保留小数点后6位
+    e_V = 0.001  # tolerance of the error between optimal cost and real cost 实际代价函数的值与最优之间的最大误差
+    e_g = 0.001  # tolerance of the violation of constraints 最大的违反约束的程度
+    max_iter = 1000  # maximum steps of the solver 最大迭代步数
 
-    mpc.PrintCppCode(0.001, 0.001, 1000)
+    mpc.PrintCppCode(e_V, e_g, max_iter)
 ```
 **result:**
 ```cpp
+MatDataType_t L_phi = 9.90287;
+MatDataType_t e_V = 0.001;
+MatDataType_t e_g = 0.001;
+uint32_t max_iter = 1000;
+uint32_t N = 5;
+
 MatDataType_t A_arr[4] = {2, 1, 0, 2};
 MatDataType_t B_arr[4] = {1, 0, 0, 1};
 MatDataType_t Q_arr[4] = {1, 0, 0, 3};
@@ -175,10 +186,7 @@ c = c_arr;
 FN = FN_arr;
 cN = cN_arr;
 
-MatDataType_t L_phi = 9.90287;
-
-MPC mpc = MPC(L_phi, 0.001, 0.001, 1000, 5, A, B, Q, R, QN, F, G, c, FN, cN);
-```
+MPC mpc = MPC(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
 ## Note
 Considering the real-time requirements of the algorithm, the data of the matrix is stored in a fixed length array rather than vector container. If larger matrix operations are needed, you can modify the `MAXSIZE` in the [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h) file, which is the maximum number of matrix elements. In addition, you can also determine whether the data type of the matrix is float or double through the `SINGLE_PRECISION` and `DOUBLE_PRECISION` in the [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h) file.
 ## Licence
