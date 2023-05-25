@@ -13,7 +13,7 @@
 
 // 矩阵元素个数的最大值
 // Maximum number of matrix elements
-#define MAXSIZE 15
+#define MAXSIZE 20
 
 #ifdef SINGLE_PRECISION
 typedef float MatDataType_t;

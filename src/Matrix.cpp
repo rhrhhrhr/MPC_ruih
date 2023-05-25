@@ -220,9 +220,9 @@ Matrix Matrix::operator- (const Matrix& mat) {
 Matrix Matrix::operator* (const Matrix& mat) {
     Matrix temp(this->row, mat.column);
 
-    for (int i = 0; i < this->row; i++) {
-        for (int j = 0; j < mat.column; j++) {
-            for (int k = 0; k < this->column; k++) {
+    for (int j = 0; j < mat.column; j++) {
+        for (int k = 0; k < this->column; k++) {
+            for (int i = 0; i < this->row; i++) {
                 temp.data[i * mat.column + j] +=
                         this->data[i * this->column + k] * mat.data[k * mat.column + j];
             }
