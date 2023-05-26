@@ -219,7 +219,40 @@ Matrix Matrix::operator- (const Matrix& mat) {
 // Matrix multiplication
 Matrix Matrix::operator* (const Matrix& mat) {
     Matrix temp(this->row, mat.column);
+#ifdef ORDER_OF_MATMUL_IJK
+    for (int i = 0; i < this->row; i++) {
+        for (int j = 0; j < mat.column; j++) {
+            for (int k = 0; k < this->column; k++) {
+                temp.data[i * mat.column + j] +=
+                        this->data[i * this->column + k] * mat.data[k * mat.column + j];
+            }
+        }
+    }
+#endif
 
+#ifdef ORDER_OF_MATMUL_IKJ
+    for (int i = 0; i < this->row; i++) {
+        for (int k = 0; k < this->column; k++) {
+            for (int j = 0; j < mat.column; j++) {
+                temp.data[i * mat.column + j] +=
+                        this->data[i * this->column + k] * mat.data[k * mat.column + j];
+            }
+        }
+    }
+#endif
+
+#ifdef ORDER_OF_MATMUL_JIK
+    for (int j = 0; j < mat.column; j++) {
+        for (int i = 0; i < this->row; i++) {
+            for (int k = 0; k < this->column; k++) {
+                temp.data[i * mat.column + j] +=
+                        this->data[i * this->column + k] * mat.data[k * mat.column + j];
+            }
+        }
+    }
+#endif
+
+#ifdef ORDER_OF_MATMUL_JKI
     for (int j = 0; j < mat.column; j++) {
         for (int k = 0; k < this->column; k++) {
             for (int i = 0; i < this->row; i++) {
@@ -228,6 +261,29 @@ Matrix Matrix::operator* (const Matrix& mat) {
             }
         }
     }
+#endif
+
+#ifdef ORDER_OF_MATMUL_KIJ
+    for (int k = 0; k < this->column; k++) {
+        for (int i = 0; i < this->row; i++) {
+            for (int j = 0; j < mat.column; j++) {
+                temp.data[i * mat.column + j] +=
+                        this->data[i * this->column + k] * mat.data[k * mat.column + j];
+            }
+        }
+    }
+#endif
+
+#ifdef ORDER_OF_MATMUL_KJI
+    for (int k = 0; k < this->column; k++) {
+        for (int j = 0; j < mat.column; j++) {
+            for (int i = 0; i < this->row; i++) {
+                temp.data[i * mat.column + j] +=
+                        this->data[i * this->column + k] * mat.data[k * mat.column + j];
+            }
+        }
+    }
+#endif
 
     return temp;
 }
