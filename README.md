@@ -189,7 +189,31 @@ cN = cN_arr;
 MPC mpc = MPC(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
 ```
 ## Note
-Considering the real-time requirements of the algorithm, the data of the matrix is stored in a fixed length array rather than vector container. If larger matrix operations are needed, you can modify the `MAXSIZE` in the [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h) file, which is the maximum number of matrix elements. In addition, you can also determine whether the data type of the matrix is float or double through the `SINGLE_PRECISION` and `DOUBLE_PRECISION` in the [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h) file.
+### Matrix size
+Considering the real-time requirements of the algorithm, the data of the matrix is stored in a fixed length array rather than vector container. If larger matrix operations are needed, you can modify the `MAXSIZE` in [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h), which is the maximum number of matrix elements. 
+### Matrix data type
+You can also determine whether the data type of the matrix is float or double through the `SINGLE_PRECISION` and `DOUBLE_PRECISION` in [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h).
+### Order of matrix multiplication
+Generally, the implementation of matrix multiplication is as follows:
+```cpp
+for (int i = 0; i < this->row; i++) {
+    for (int j = 0; j < mat.column; j++) {
+        for (int k = 0; k < this->column; k++) {
+            temp.data[i * mat.column + j] +=
+                    this->data[i * this->column + k] * mat.data[k * mat.column + j];
+        }
+    }
+}
+```
+However, the speed of matrix multiplication can be improved by changing the order of i, j, k. Because normal order can cause discontinuous array memory access. But unexpectedly, testing on ESP32 shows that the order of jki is the fastest. The specific reason is not yet clear, so you can try which one is faster when using it yourself by using macro definition in [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h).
+```cpp
+//#define ORDER_OF_MATMUL_IJK
+//#define ORDER_OF_MATMUL_IKJ
+//#define ORDER_OF_MATMUL_JIK
+#define ORDER_OF_MATMUL_JKI
+//#define ORDER_OF_MATMUL_KIJ
+//#define ORDER_OF_MATMUL_KJI
+```
 ## Licence
 MIT
 ## Author
