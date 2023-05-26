@@ -205,7 +205,7 @@ for (int i = 0; i < this->row; i++) {
     }
 }
 ```
-However, the speed of matrix multiplication can be improved by changing the order of i, j, k. Because normal order can cause discontinuous array memory access. But unexpectedly, testing on ESP32 shows that the order of jki is the fastest. The specific reason is not yet clear, so you can try which one is faster when using it yourself by using the related macro definition in [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h).
+However, the speed of matrix multiplication can be improved by changing the order of i, j, k because normal order can cause discontinuous array memory access. But unexpectedly, testing on ESP32 shows that the order of jki is the fastest. The specific reason is not yet clear, so you can try which one is faster when using it yourself by using the related macro definition in [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h).
 ```cpp
 //#define ORDER_OF_MATMUL_IJK
 //#define ORDER_OF_MATMUL_IKJ
