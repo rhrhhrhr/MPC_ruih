@@ -40,8 +40,7 @@ This operation will push the data of the array into the matrix.<br><br>
 **code:**
 ```cpp
 MatDataType_t arr[4] = {1, 2, 3, 4};
-Matrix mat = Matrix(2, 2);
-mat = arr;
+Matrix mat = Matrix(2, 2, arr);
 mat.Print();
 ```
 **result:**
@@ -53,10 +52,8 @@ Note that this method can only be used when the row and column of the matrix hav
 **code:**
 ```cpp
 MatDataType_t arr[4] = {1, 2, 3, 4};
-Matrix mat1 = Matrix(2, 2);
-Matrix mat2 = Matrix(4, 1);
-mat1 = arr;
-mat2 = arr;
+Matrix mat1 = Matrix(2, 2, arr);
+Matrix mat2 = Matrix(4, 1, arr);
 mat1.Print();
 mat2.Print();
 ```
@@ -75,28 +72,24 @@ This operation will copy the row, column and data of another matrix.<br><br>
 **code:**
 ```cpp
 MatDataType_t arr[4] = {1, 2, 3, 4};
-Matrix mat1 = Matrix(2, 2);
+Matrix mat1 = Matrix(2, 2, arr);
 Matrix mat2 = Matrix(4, 1);
+
 mat1.Print();
 mat2.Print();
 
-mat1 = arr;
 mat2 = mat1;
-mat1.Print;
-mat2.Print
+mat2.Print();
 ```
 **result:**
 ```cpp
-0 0 
-0 0 
-
-0 
-0 
-0 
-0 
-
 1 2 
 3 4 
+
+0 
+0 
+0 
+0 
 
 1 2 
 3 4 
@@ -111,10 +104,10 @@ Parameter `L_phi` determines the step size of gradient descent. It is best to ca
 Parameters `epsilon_V` and `epsilon_g` here are the tolerances of the error between optimal cost and real cost and the violation of constraints respectively. Note that the tolerances not only describe the absolute error, but also describe the relative error sometimes. This depends on the specific situation.<br><br>
 Parameter `max_iter` is the maximum number of the solving step.<br><br>
 Parameter `N` is the prediction horizon of the MPC controller.<br><br>
-Matrix `A`, `B` describe the system's state space equation $$x_{k+1} = Ax_k + Bu_k$$
-Matrix `Q`, `R`, `QN` describe the cost function of the MPC controller $$V(X, U) = \sum\limits_{k=0}^{N-1}(x_k^TQx_k + u_k^TRu_k) + x_N^TQ_Nx_N$$
-Matrix `F`, `G`, `c` describe the state and input constraints $$Fx_k + Gu_k \le c$$
-Matrix `FN`, `cN` describe the terminal constraints $$F_Nx_N \le c_N$$
+Matrix `A`, `B` describe the system's state space equation $x_{k+1} = Ax_k + Bu_k$<br><br>
+Matrix `Q`, `R`, `QN` describe the cost function of the MPC controller $V(X, U) = \sum\limits_{k=0}^{N-1}(x_k^TQx_k + u_k^TRu_k) + x_N^TQ_Nx_N$<br><br>
+Matrix `F`, `G`, `c` describe the state and input constraints $Fx_k + Gu_k \le c$<br><br>
+Matrix `FN`, `cN` describe the terminal constraints $F_Nx_N \le c_N$
 ### Initialize a MPC controller
 You can use the python package LinearMPCFactor in repo [MPC_ruih_MPCSetup](https://github.com/rhrhhrhr/MPC_ruih_MPCSetup) to generate the setup code for a MPC controller as below:<br><br>
 **code:**
@@ -164,27 +157,16 @@ MatDataType_t c_arr[6] = {5, 5, 1, 1, 1, 1};
 MatDataType_t FN_arr[8] = {1.583519, 0.878277, -1.583519, -0.878277, 0.086517, 1.788762, -0.086517, -1.788762};
 MatDataType_t cN_arr[4] = {1.0, 1.0, 1.0, 1.0};
 
-Matrix A = Matrix(2, 2);
-Matrix B = Matrix(2, 2);
-Matrix Q = Matrix(2, 2);
-Matrix R = Matrix(2, 2);
-Matrix QN = Matrix(2, 2);
-Matrix F = Matrix(6, 2);
-Matrix G = Matrix(6, 2);
-Matrix c = Matrix(6, 1);
-Matrix FN = Matrix(4, 2);
-Matrix cN = Matrix(4, 1);
-
-A = A_arr;
-B = B_arr;
-Q = Q_arr;
-R = R_arr;
-QN = QN_arr;
-F = F_arr;
-G = G_arr;
-c = c_arr;
-FN = FN_arr;
-cN = cN_arr;
+Matrix A = Matrix(2, 2, A_arr);
+Matrix B = Matrix(2, 2, B_arr);
+Matrix Q = Matrix(2, 2, Q_arr);
+Matrix R = Matrix(2, 2, R_arr);
+Matrix QN = Matrix(2, 2, QN_arr);
+Matrix F = Matrix(6, 2, F_arr);
+Matrix G = Matrix(6, 2, G_arr);
+Matrix c = Matrix(6, 1, c_arr);
+Matrix FN = Matrix(4, 2, FN_arr);
+Matrix cN = Matrix(4, 1, cN_arr);
 
 MPC mpc = MPC(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
 ```
