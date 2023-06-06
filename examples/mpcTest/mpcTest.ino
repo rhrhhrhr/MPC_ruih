@@ -6,6 +6,12 @@ void setup() {
 
     // 初始化MPC相关的矩阵
     // Initialize the matrix required for MPC
+    MatDataType_t L_phi = 9.90287;
+    MatDataType_t e_V = 0.001;
+    MatDataType_t e_g = 0.001;
+    uint32_t max_iter = 1000;
+    uint32_t N = 5;
+    
     MatDataType_t A_arr[4] = {2, 1, 0, 2 };
     MatDataType_t B_arr[4] = {1, 0, 0, 1 };
     MatDataType_t Q_arr[4] = {1, 0, 0, 3 };
@@ -17,35 +23,23 @@ void setup() {
     MatDataType_t FN_arr[8] = {1.58351933, 0.87827667, 0.086517, 1.78876199, -1.58351933, -0.87827667, -0.086517, -1.78876199};
     MatDataType_t cN_arr[4] = {1, 1, 1, 1};
 
-    Matrix A = Matrix(2, 2);
-    Matrix B = Matrix(2, 2);
-    Matrix Q = Matrix(2, 2);
-    Matrix R = Matrix(2, 2);
-    Matrix QN = Matrix(2, 2);
-    Matrix F = Matrix(6, 2);
-    Matrix G = Matrix(6, 2);
-    Matrix c = Matrix(6, 1);
-    Matrix FN = Matrix(4, 2);
-    Matrix cN = Matrix(4, 1);
-
-    A = A_arr;
-    B = B_arr;
-    Q = Q_arr;
-    R = R_arr;
-    QN = QN_arr;
-    F = F_arr;
-    G = G_arr;
-    c = c_arr;
-    FN = FN_arr;
-    cN = cN_arr;
-
-    MatDataType_t state_arr[2] = {1.5, -0.75};
-    Matrix state(2, 1);
-    state = state_arr;
-
+    Matrix A = Matrix(2, 2, A_arr);
+    Matrix B = Matrix(2, 2, B_arr);
+    Matrix Q = Matrix(2, 2, Q_arr);
+    Matrix R = Matrix(2, 2, R_arr);
+    Matrix QN = Matrix(2, 2, QN_arr);
+    Matrix F = Matrix(6, 2, F_arr);
+    Matrix G = Matrix(6, 2, G_arr);
+    Matrix c = Matrix(6, 1, c_arr);
+    Matrix FN = Matrix(4, 2, FN_arr);
+    Matrix cN = Matrix(4, 1, cN_arr);
+    
     // 初始化MPC类
     // Initialize MPC class
-    MPC mpc = MPC(9.90287, 0.001, 0.001, 1000, 5, A, B, Q, R, QN, F, G, c, FN, cN);
+    MPC mpc = MPC(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
+
+    MatDataType_t state_arr[2] = {1.5, -0.75};
+    Matrix state(2, 1, state_arr);
 
     // 用于测试求解时间
     // Test the time needed for solving the problem
