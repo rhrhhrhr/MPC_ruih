@@ -16,8 +16,8 @@
 // @param A, B, Q, R, QN    A, B in the system state space equation and Q, R, QN in the cost function
 // @param F, G, c, FN, cN   State and Input Constraints F * x + G * u <= c, Terminal constraints FN * xN <= cN
 MPC::MPC(MatDataType_t L_phi, MatDataType_t epsilon_V, MatDataType_t epsilon_g, uint32_t max_iter,
-         uint32_t N, Matrix& A, Matrix& B, Matrix& Q, Matrix& R, Matrix& QN,
-         Matrix& F, Matrix& G, Matrix& c, Matrix& FN, Matrix& cN)
+         uint32_t N, Matrix &A, Matrix &B, Matrix &Q, Matrix &R, Matrix &QN,
+         Matrix &F, Matrix &G, Matrix &c, Matrix &FN, Matrix &cN)
 {
     this->L_phi = L_phi;
     this->epsilon_V = epsilon_V;
@@ -125,7 +125,7 @@ void MPC::FactorIni() {
 
 // 求解使对偶问题最小的x, u, 用到了里卡提递归
 // Solve x, u to minimize the dual problem using Riccati recursion
-void MPC::SolveDual(Matrix & state, Matrix * y_, Matrix * x_, Matrix * u_) {
+void MPC::SolveDual(Matrix &state, Matrix *y_, Matrix *x_, Matrix *u_) {
     Matrix e[N];
 
     e[N - 1] = FN.Trans() * y_[N];
@@ -146,7 +146,7 @@ void MPC::SolveDual(Matrix & state, Matrix * y_, Matrix * x_, Matrix * u_) {
 
 // 状态输入约束g(xi, ui) <= 0
 // State and input constraints g(xi, ui) <= 0
-Matrix MPC::g(Matrix & xk, Matrix & uk) {
+Matrix MPC::g(Matrix &xk, Matrix &uk) {
 
     Matrix g_k = F * xk + G * uk - c;
 
@@ -155,7 +155,7 @@ Matrix MPC::g(Matrix & xk, Matrix & uk) {
 
 // 终端约束 gN(xN) <= 0
 // Terminal constraints gN(xN) <= 0
-Matrix MPC::gN(Matrix & xN) {
+Matrix MPC::gN(Matrix &xN) {
     Matrix g_N = FN * xN - cN;
 
     return g_N;
@@ -163,7 +163,7 @@ Matrix MPC::gN(Matrix & xN) {
 
 // 代价函数V(X, U)
 // Cost function V(X, U)
-MatDataType_t MPC::V(Matrix * x_, Matrix * u_) {
+MatDataType_t MPC::V(Matrix *x_, Matrix *u_) {
     MatDataType_t res;
     Matrix res_mat(1, 1);
 
@@ -181,7 +181,7 @@ MatDataType_t MPC::V(Matrix * x_, Matrix * u_) {
 
 // 对偶问题的值Psi(y, state)
 // The value of the dual problem Psi(y, state)
-MatDataType_t MPC::Psi(Matrix * y_, Matrix & state) {
+MatDataType_t MPC::Psi(Matrix *y_, Matrix &state) {
     MatDataType_t res;
     Matrix res_mat(1, 1);
 
@@ -204,7 +204,7 @@ MatDataType_t MPC::Psi(Matrix * y_, Matrix & state) {
 
 // 求取g(X, U)中的最大元素(包括g(xi, ui)和gN(xN))
 // Find the maximum value in g (X, U), including g(xi, ui) and gN(xN)
-MatDataType_t MPC::gMax(Matrix * x_, Matrix * u_) {
+MatDataType_t MPC::gMax(Matrix *x_, Matrix *u_) {
 
     MatDataType_t temp;
     MatDataType_t res = gN(x_[N]).MaxVal();
@@ -234,7 +234,7 @@ bool MPC::wNonNeg() {
 
 // 判断数值优化是否该停止
 // Determine whether numerical optimization should be stopped
-bool MPC::Stop(Matrix & state) {
+bool MPC::Stop(Matrix &state) {
     bool res1, res2;
     MatDataType_t temp1, temp2, temp3, max;
     Matrix matTemp;
@@ -260,7 +260,7 @@ bool MPC::Stop(Matrix & state) {
 
 // GPAD算法求解MPC优化问题
 // Using GPAD algorithm to solve MPC optimization problems
-Matrix MPC::Solver(Matrix & state) {
+Matrix MPC::Solver(Matrix &state) {
 
     int iter = 0;
     MatDataType_t theta = 1;

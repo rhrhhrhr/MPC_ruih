@@ -24,16 +24,17 @@ public:
     // Matrix initialization
     Matrix();
     Matrix(uint32_t , uint32_t);
+    Matrix(uint32_t, uint32_t, MatDataType_t *);
 
     // 获取矩阵信息
     // Get matrix information
     void Print();
 
-    bool operator>= (MatDataType_t);
+    bool operator>=(MatDataType_t);
 
     uint32_t getRow() const;
     uint32_t getCol() const;
-    MatDataType_t operator() (uint32_t, uint32_t);
+    MatDataType_t& operator()(uint32_t, uint32_t);
 
     MatDataType_t MaxVal();
     Matrix NonNegProj();
@@ -43,12 +44,11 @@ public:
     Matrix Trans();
     Matrix Inv();
 
-    Matrix operator+ (const Matrix&);
-    Matrix operator- (const Matrix&);
-    Matrix operator* (const Matrix&);
-    Matrix operator* (MatDataType_t);
-    Matrix& operator= (const Matrix&);
-    Matrix& operator= (MatDataType_t*);
+    Matrix operator+(const Matrix &);
+    Matrix operator-(const Matrix &);
+    Matrix operator*(const Matrix &);
+    Matrix operator*(MatDataType_t);
+    Matrix& operator=(const Matrix &);
 };
 
 #endif //MATRIX_H

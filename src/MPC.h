@@ -5,7 +5,7 @@
 #ifndef MPC_H
 #define MPC_H
 
-#include "Matrix.h"
+#include "KalmanFilter.h"
 #include "MPCConfig.h"
 
 class MPC {
@@ -15,8 +15,8 @@ private:
     MatDataType_t L_phi, epsilon_V, epsilon_g;
     uint32_t max_iter, N;
     Matrix A, B, Q, R, QN, F, G, c, FN, cN;
-    Matrix * K, * D, * M, * L, * C;
-    Matrix * y, * y_p, * w, * x, * u, * x_bar, * u_bar, * x_bar_p, * u_bar_p;
+    Matrix *K, *D, *M, *L, *C;
+    Matrix *y, *y_p, *w, *x, *u, *x_bar, *u_bar, *x_bar_p, *u_bar_p;
 
     void FactorIni();  // 矩阵数组K, D, M, L, C初始化 Initialize matrix arrays K, D, M, L, C
     void SolveDual(Matrix &, Matrix *, Matrix *, Matrix *);  // 求解对偶问题 Solving Dual Problems
@@ -34,8 +34,8 @@ private:
 public:
     // MPC初始化
     // MPC initialization
-    MPC(MatDataType_t, MatDataType_t, MatDataType_t, uint32_t , uint32_t , Matrix &, Matrix &, Matrix &, Matrix &, Matrix &, Matrix &, Matrix &,
-        Matrix &, Matrix &, Matrix &);
+    MPC(MatDataType_t, MatDataType_t, MatDataType_t, uint32_t , uint32_t ,
+        Matrix &, Matrix &, Matrix &, Matrix &, Matrix &, Matrix &, Matrix &, Matrix &, Matrix &, Matrix &);
     ~MPC();
 
     // 优化求解器主体

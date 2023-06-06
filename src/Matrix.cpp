@@ -58,6 +58,15 @@ Matrix::Matrix(uint32_t r, uint32_t c) {
     column = c;
 }
 
+// 创建一个r行c列的矩阵，且用数组给它赋值
+// Create a matrix with r rows and c columns, and assign values to it using an array
+Matrix::Matrix(uint32_t r, uint32_t c, MatDataType_t *arr) {
+    row = r;
+    column = c;
+
+    memcpy(data, arr, row * column * sizeof(MatDataType_t));
+}
+
 // 获取矩阵的行
 // Get the row of the matrix
 uint32_t Matrix::getRow() const {
@@ -70,6 +79,12 @@ uint32_t Matrix::getCol() const {
     return column;
 }
 
+// 获取第i行第j列的数据
+// Get the i-th row and jth column of the matrix
+MatDataType_t& Matrix::operator()(uint32_t i, uint32_t j) {
+    return data[i * column + j];
+}
+
 // 打印矩阵
 // Print the matrix
 void Matrix::Print() {
@@ -80,6 +95,19 @@ void Matrix::Print() {
             Serial.println();
     }
     Serial.println();
+}
+
+// 判断矩阵所有元素是否大于等于val
+// Determine whether all elements of the matrix are greater than or equal to val
+bool Matrix::operator>= (MatDataType_t val) {
+    bool res = true;
+
+    for(int i = 0; i < row * column; i++) {
+        res = res & (data[i] >= val);
+        if(!res) break;
+    }
+
+    return res;
 }
 
 // 获取所有矩阵元素中的最大值
@@ -191,7 +219,7 @@ Matrix Matrix::Inv() {
 
 // 矩阵加法
 // Matrix addition
-Matrix Matrix::operator+ (const Matrix& mat) {
+Matrix Matrix::operator+ (const Matrix &mat) {
     Matrix temp(this->row, this->column);
 
     for (int i = 0; i < this->row * this->column; i++)
@@ -204,7 +232,7 @@ Matrix Matrix::operator+ (const Matrix& mat) {
 
 // 矩阵减法
 // Matrix subtraction
-Matrix Matrix::operator- (const Matrix& mat) {
+Matrix Matrix::operator- (const Matrix &mat) {
     Matrix temp(this->row, this->column);
 
     for (int i = 0; i < this->row * this->column; i++)
@@ -217,7 +245,7 @@ Matrix Matrix::operator- (const Matrix& mat) {
 
 // 矩阵乘法
 // Matrix multiplication
-Matrix Matrix::operator* (const Matrix& mat) {
+Matrix Matrix::operator* (const Matrix &mat) {
     Matrix temp(this->row, mat.column);
 #ifdef ORDER_OF_MATMUL_IJK
     for (int i = 0; i < this->row; i++) {
@@ -303,7 +331,7 @@ Matrix Matrix::operator* (MatDataType_t k) {
 
 // 矩阵拷贝
 // Matrix copy
-Matrix& Matrix::operator= (const Matrix& mat) {
+Matrix& Matrix::operator= (const Matrix &mat) {
     if(this != &mat)
     {
         row = mat.row;
@@ -312,37 +340,4 @@ Matrix& Matrix::operator= (const Matrix& mat) {
     }
 
     return *this;
-}
-
-// 数组给矩阵赋值
-// Assigning values to a matrix through an array
-Matrix& Matrix::operator= (MatDataType_t *arr) {
-    memcpy(data, arr, row * column * sizeof(MatDataType_t));
-
-    return *this;
-}
-
-// 获取第i行第j列的数据
-// Get the i-th row and jth column of the matrix
-MatDataType_t Matrix::operator()(uint32_t i, uint32_t j) {
-    MatDataType_t res = 0;
-
-    if(i < row && j < column){
-        res = data[i * column + j];
-    }
-
-    return res;
-}
-
-// 判断矩阵所有元素是否大于等于val
-// Determine whether all elements of the matrix are greater than or equal to val
-bool Matrix::operator>= (MatDataType_t val) {
-    bool res = true;
-
-    for(int i = 0; i < row * column; i++) {
-        res = res & (data[i] >= val);
-        if(!res) break;
-    }
-
-    return res;
 }
