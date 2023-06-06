@@ -294,13 +294,13 @@ Matrix x, P, A, B, C, Q, R;
 Matrix K, x_pre, P_pre;
 ```
 These parameters correspond to the relevant parameters in the formula of the Kalman filter:<br><br>
-**Prediction:**<br>
-$\hat{x^-_k} = A\hat{x_{k-1}} + Bu_{k-1}$<br>
-$P^-_k = AP_{k-1}A^T + Q$<br>
-**Update:**<br>
-$K_k = \frac{P^-_kC^T}{CP^-_kC^T + R}$<br>
-$\hat{x_k} = \hat{x^-_k} + K_k(y_k - C\hat{x^-_k})$<br>
-$P_k = (I - K_kC)P^-_k$<br>
+**Prediction:**<br><br>
+$\hat{x^-_k} = A\hat{x_{k-1}} + Bu_{k-1}$<br><br>
+$P^-_k = AP_{k-1}A^T + Q$<br><br>
+**Update:**<br><br>
+$K_k = \frac{P^-_kC^T}{CP^-_kC^T + R}$<br><br>
+$\hat{x_k} = \hat{x^-_k} + K_k(y_k - C\hat{x^-_k})$<br><br>
+$P_k = (I - K_kC)P^-_k$<br><br>
 ### Initialize a Kalman Filter
 You can initialize a Kalman Filter as below:<br><br>
 ```cpp
