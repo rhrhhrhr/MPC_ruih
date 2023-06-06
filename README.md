@@ -295,7 +295,7 @@ Matrix K, x_pre, P_pre;
 ```
 These parameters correspond to the relevant parameters in the formula of the Kalman filter:<br><br>
 **Prediction:**<br><br>
-$\hat{x^-_k} = A \hat{x_{k-1}}$<br><br>
+$\hat{x^-_k} = \hat{x_{k-1}}$<br><br>
 **Update:**<br><br>
 $K_k = \frac{P^-_kC^T}{CP^-_kC^T + R}$<br><br>
 $\hat{x_k} = \hat{x^-_k} + K_k(y_k - C\hat{x^-_k})$<br><br>
