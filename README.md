@@ -291,7 +291,6 @@ for(;;) {
 ### Parameters of the KalmanFilter class
 ```cpp
 Matrix x, P, A, B, C, Q, R;
-Matrix K, x_pre, P_pre;
 ```
 These parameters correspond to the relevant parameters in the formula of the Kalman filter:<br><br>
 **Prediction:**<br><br>
@@ -301,6 +300,9 @@ $P^-_k = AP\_{k-1}A^T + Q$<br><br>
 $K_k = \frac{P^-_kC^T}{CP^-_kC^T + R}$<br><br>
 $\hat{x}_k = \hat{x}^-_k + K_k(y_k - C\hat{x}^-_k)$<br><br>
 $P_k = (I - K_kC)P^-_k$<br><br>
+The only parameters you need to initialize are:<br><br>
+The initial x and P;<br>
+Matrices A, B, and C describe the system state: $x_{k+1} = Ax_k + Bu_k$ space equation and observation equation: $y_k = Cx_k$;<br>
 ### Initialize a Kalman Filter
 You can initialize a Kalman Filter as below:<br><br>
 ```cpp
