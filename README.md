@@ -302,7 +302,8 @@ $\hat{x}_k = \hat{x}^-_k + K_k(y_k - C\hat{x}^-_k)$<br><br>
 $P_k = (I - K_kC)P^-_k$<br><br>
 The only parameters you need to initialize are:<br><br>
 The initial x and P;<br>
-Matrices A, B, and C describe the system state: $x_{k+1} = Ax_k + Bu_k$ space equation and observation equation: $y_k = Cx_k$;<br>
+Matrices A, B, and C describe the system state: $x\_{k+1} = Ax_k + Bu_k$ space equation and observation equation: $y_k = Cx_k$;<br>
+Matrices Q and R describe the covariance matrices of process noise and observation noise, respectively.These two parameters are also the most influential on the results, representing whether you trust the predicted value or the observed value more.
 ### Initialize a Kalman Filter
 You can initialize a Kalman Filter as below:<br><br>
 ```cpp
@@ -371,6 +372,45 @@ Matrix Q_noise = Matrix(3, 3, Q_noise_arr);
 Matrix R_noise = Matrix(3, 3, R_noise_arr);
 
 KalmanFilter filter = KalmanFilter(state_ini, P_ini, A, B, C, Q_noise, R_noise);
+```
+### How to use the KalmanFilter class
+Usually, Kalman filters are used in conjunction with controllers:
+```cpp
+Matrix output = Matrix(ny, 1);
+Matrix state = Matrix(nx, 1);
+Matrix input = Matrix(nu, 1);
+
+// Sampling period
+const TickType_t xFrequency = 30;
+TickType_t xLastWakeTime = xTaskGetTickCount();
+
+for(;;) {
+    // Obtaining information from sensors
+    ...
+
+    // Assign the data obtained by the sensors to the matrix state
+    output(0, 0) = sensor_0;
+    output(1, 0) = sensor_1;
+    ...
+    output(ny - 1, 0) = sensor_ny_1;
+    
+    // Observing states using Kalman filters
+    state = filter(input, output);
+    
+    // Calculate the inputs required for the control system
+    input = mpc.Solver(state);
+    
+    // Read the data of the matrix input
+    input_0 = input(0, 0);
+    input_1 = input(1, 0);
+    ...
+    input_nu_1 = input(nu - 1, 0);
+    
+    // Pass the data into the actuators
+    ...
+    
+    vTaskDelayUntil(&xLastWakeTime, xFrequency)
+}
 ```
 ## Note
 ### Matrix size
