@@ -94,6 +94,89 @@ mat2.Print();
 1 2 
 3 4 
 ```
+### How to use the Matrix class
+#### Basic Operations of Matrices
+You can use basic matrix operations such as addition, multiplication, multiplication, inversion, and transpose as below:<br><br>
+**code:**
+```cpp
+MatDataType_t arr1[4] = {1, 2, 3, 4};
+MatDataType_t arr2[4] = {6, 5, 4, 3};
+
+Matrix matrix1 = Matrix(2, 2, arr1);
+Matrix matrix2 = Matrix(2, 2, arr2);
+
+matrix1.Print();
+matrix2.Print();
+
+Matrix matrix3;
+
+matrix3 = matrix1 * matrix2;
+matrix3.Print();
+
+matrix3 = matrix1 + matrix2;
+matrix3.Print();
+
+matrix3 = matrix1.Inv();
+matrix3.Print();
+
+matrix3 = matrix1.Trans();
+matrix3.Print();
+```
+**result:**
+```cpp
+1 2 
+3 4 
+
+6 5 
+4 3 
+
+14 11 
+34 27 
+
+7 7 
+7 7 
+
+-2 1 
+1.5 -0.5 
+
+1 3 
+2 4 
+```
+#### Get matrix information
+You can use the following methods to obtain the number of rows, columns, and data of a matrix:<br><br>
+**code:**
+```cpp
+MatDataType_t arr1[4] = {1, 2, 3, 4};
+Matrix matrix1 = Matrix(2, 2, arr1);
+
+Serial.println(matrix1.getRow());
+Serial.println(matrix1.getCol());
+Serial.println(matrix1(0, 1));
+```
+**result:**
+```cpp
+2
+2
+4
+```
+You can also assign values to the i-th row and jth column of the matrix as below:
+**code:**
+```cpp
+MatDataType_t arr1[4] = {1, 2, 3, 4};
+Matrix matrix1 = Matrix(2, 2, arr1);
+
+matrix1.Print();
+matrix1(1, 1) = 10;
+matrix1.Print();
+```
+**result:**
+```cpp
+1 2 
+3 4 
+
+1 2 
+3 10 
+```
 ### Parameters of the MPC class
 ```cpp
 MatDataType_t L_phi, epsilon_V, epsilon_g;
@@ -170,6 +253,54 @@ Matrix cN = Matrix(4, 1, cN_arr);
 
 MPC mpc = MPC(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
 ```
+### How to use the MPC class
+You can use the function solver() to solve optimization problems at each sampling period. The input of this function is the system state at the current time, and the output is the system control input. Both variables are of the type Matrix.
+```cpp
+Matrix state = Matrix(nx, 1);
+Matrix input = Matrix(nu, 1);
+
+// Sampling period
+const TickType_t xFrequency = 30;
+TickType_t xLastWakeTime = xTaskGetTickCount();
+
+for(;;) {
+    // Obtaining information from sensors
+    ...
+
+    // Assign the data obtained by the sensors to the matrix state
+    state(0, 0) = sensor_0;
+    state(1, 0) = sensor_1;
+    ...
+    state(nx - 1, 0) = sensor_nx_1;
+    
+    // Calculate the inputs required for the control system
+    input = mpc.Solver(state);
+    
+    // Read the data of the matrix input
+    input_0 = input(0, 0);
+    input_1 = input(1, 0);
+    ...
+    input_nu_1 = input(nu - 1, 0);
+    
+    // Pass the data into the actuators
+    ...
+    
+    vTaskDelayUntil(&xLastWakeTime, xFrequency)
+}
+```
+### Parameters of the KalmanFilter class
+```cpp
+Matrix x, P, A, B, C, Q, R;
+Matrix K, x_pre, P_pre;
+```
+These parameters correspond to the relevant parameters in the formula of the Kalman filter:<br><br>
+**Prediction:**<br>
+$\hat{x^-_k} = A\hat{x_{k-1}} + Bu_{k-1}$<br>
+$P^-_k = AP_{k-1}A^T + Q$<br>
+**Update:**<br>
+$\K_k = frac{P^-_kC^T}{CP^-_kC^T + R}$<br>
+$\hat{x_k} = \hat{x^-_k} + K_k(y_k - C\hat{x^-_k})$<br>
+$P_k = (I - K_kC)P^-_k$<br>
 ### Initialize a Kalman Filter
 You can initialize a Kalman Filter as below:<br><br>
 ```cpp
@@ -190,6 +321,54 @@ Matrix Q = Matrix(3, 3, Q_noise_arr);
 Matrix R = Matrix(3, 3, R_noise_arr);
 
 KalmanFilter filter = KalmanFilter(state_ini, P_ini, A, B, C, Q, R);
+```
+If you want to use both MPC controller and Kalman filter at the same time, you can initialize as below:<br><br>
+```cpp
+MatDataType_t L_phi = 9.90287;
+MatDataType_t e_V = 0.001;
+MatDataType_t e_g = 0.001;
+uint32_t max_iter = 1000;
+uint32_t N = 5;
+
+MatDataType_t A_arr[9] = {1.054036, 0.030319, 7e-06, 3.625607, 1.039288, 0.00047, -3.618468, -0.039246, 0.995571};
+MatDataType_t B_arr[3] = {-0.067516, -2.311213, 13.571525};
+MatDataType_t Q_arr[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+MatDataType_t R_arr[1] = {1};
+MatDataType_t QN_arr[9] = {25986.560619, 2565.143691, 421.750859, 2565.143691, 255.373404, 41.824491, 421.750859, 41.824491, 7.882274};
+MatDataType_t F_arr[18] = {1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+MatDataType_t G_arr[6] = {0.0, 0.0, 0.0, 0.0, 1.0, -1.0};
+MatDataType_t c_arr[6] = {0.261799, 0.261799, 120.0, 120.0, 0.4, 0.4};
+MatDataType_t FN_arr[18] = {1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -7.985989, -0.772787, -0.05362, 7.985989, 0.772787, 0.05362, 1.732671, 0.191389, 0.031859, -1.732671, -0.191389, -0.031859};
+MatDataType_t cN_arr[6] = {0.261799, 0.261799, 0.4, 0.4, 0.4, 0.4};
+
+Matrix A = Matrix(3, 3, A_arr);
+Matrix B = Matrix(3, 1, B_arr);
+Matrix Q = Matrix(3, 3, Q_arr);
+Matrix R = Matrix(1, 1, R_arr);
+Matrix QN = Matrix(3, 3, QN_arr);
+Matrix F = Matrix(6, 3, F_arr);
+Matrix G = Matrix(6, 1, G_arr);
+Matrix c = Matrix(6, 1, c_arr);
+Matrix FN = Matrix(6, 3, FN_arr);
+Matrix cN = Matrix(6, 1, cN_arr);
+
+MPC mpc = MPC(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
+
+MatDataType_t state_ini_arr[3] = {0, 0, 0};
+MatDataType_t P_ini_arr[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+MatDataType_t C_arr[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+MatDataType_t Q_noise_arr[9] = {1000, 0, 0, 0, 0.1, 0, 0, 0, 0.1};
+MatDataType_t R_noise_arr[9] = {0.001, 0, 0, 0, 1, 0, 0, 0, 5};
+
+Matrix state_ini = Matrix(3, 1, state_ini_arr);
+Matrix P_ini = Matrix(3, 3, P_ini_arr);
+Matrix A = Matrix(3, 3, A_arr);
+Matrix B = Matrix(3, 1, B_arr);
+Matrix C = Matrix(3, 3, C_arr);
+Matrix Q_noise = Matrix(3, 3, Q_noise_arr);
+Matrix R_noise = Matrix(3, 3, R_noise_arr);
+
+KalmanFilter filter = KalmanFilter(state_ini, P_ini, A, B, C, Q_noise, R_noise);
 ```
 ## Note
 ### Matrix size
