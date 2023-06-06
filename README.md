@@ -170,6 +170,27 @@ Matrix cN = Matrix(4, 1, cN_arr);
 
 MPC mpc = MPC(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
 ```
+### Initialize a Kalman Filter
+You can initialize a Kalman Filter as below:<br><br>
+```cpp
+MatDataType_t state_ini_arr[3] = {0, 0, 0};
+MatDataType_t P_ini_arr[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+MatDataType_t A_arr[9] = {1.151993, 0.051895, 2e-05, 6.204752, 1.126753, 0.000803, -6.184691, -0.126503, 0.992608};
+MatDataType_t B_arr[3] = {-0.094335, -3.848594, 22.630645};
+MatDataType_t C_arr[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+MatDataType_t Q_arr[9] = {1000, 0, 0, 0, 0.1, 0, 0, 0, 0.1};
+MatDataType_t R_arr[9] = {0.001, 0, 0, 0, 1, 0, 0, 0, 5};
+
+Matrix state_ini = Matrix(3, 1, state_ini_arr);
+Matrix P_ini = Matrix(3, 3, P_ini_arr);
+Matrix A = Matrix(3, 3, A_arr);
+Matrix B = Matrix(3, 1, B_arr);
+Matrix C = Matrix(3, 3, C_arr);
+Matrix Q = Matrix(3, 3, Q_noise_arr);
+Matrix R = Matrix(3, 3, R_noise_arr);
+
+KalmanFilter filter = KalmanFilter(state_ini, P_ini, A, B, C, Q, R);
+```
 ## Note
 ### Matrix size
 Considering the real-time requirements of the algorithm, the data of the matrix is stored in a fixed length array rather than vector container. If larger matrix operations are needed, you can modify the `MAXSIZE` in [MPCConfig.h](https://github.com/rhrhhrhr/MPC_ruih/blob/main/src/MPCConfig.h), which is the maximum number of matrix elements. 
