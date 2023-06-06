@@ -6,8 +6,9 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-MPC	             KEYWORD1
+MPC	               KEYWORD1
 Matrix             KEYWORD1
+KalmanFilter       KEYWORD1
 MatDataType_t      KEYWORD1
 
 #######################################
