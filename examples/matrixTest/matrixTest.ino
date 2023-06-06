@@ -7,20 +7,21 @@ void setup() {
     MatDataType_t arr1[4] = {1, 2, 3, 4};
     MatDataType_t arr2[4] = {2, 3, 5, 3};
 
-    Matrix mat1 = Matrix(2, 2);
-    Matrix mat2 = Matrix(4, 1);
+    Matrix mat1 = Matrix(2, 2, arr1);
+    Matrix mat2 = Matrix(4, 1, arr2);
     Matrix mat3, mat4;
 
     mat1.Print();
     mat2.Print();
     mat3.Print();
+    mat4.Print();
 
-    mat2 = mat1.Trans();
-    mat2.Print();
-
-    mat2 = mat1.Inv();
-    mat3 = mat1 * mat2;
+    mat3 = mat1.Trans();
     mat3.Print();
+
+    mat3 = mat1.Inv();
+    mat4 = mat1 * mat3;
+    mat4.Print();
 
     mat3 = mat1 + mat2;
     mat3.Print();
