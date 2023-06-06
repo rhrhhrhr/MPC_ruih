@@ -298,7 +298,7 @@ These parameters correspond to the relevant parameters in the formula of the Kal
 $\hat{x^-_k} = A\hat{x_{k-1}} + Bu_{k-1}$<br>
 $P^-_k = AP_{k-1}A^T + Q$<br>
 **Update:**<br>
-$\K_k = frac{P^-_kC^T}{CP^-_kC^T + R}$<br>
+$K_k = \frac{P^-_kC^T}{CP^-_kC^T + R}$<br>
 $\hat{x_k} = \hat{x^-_k} + K_k(y_k - C\hat{x^-_k})$<br>
 $P_k = (I - K_kC)P^-_k$<br>
 ### Initialize a Kalman Filter
