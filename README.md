@@ -365,8 +365,6 @@ MatDataType_t R_noise_arr[9] = {0.001, 0, 0, 0, 1, 0, 0, 0, 5};
 
 Matrix state_ini = Matrix(3, 1, state_ini_arr);
 Matrix P_ini = Matrix(3, 3, P_ini_arr);
-Matrix A = Matrix(3, 3, A_arr);
-Matrix B = Matrix(3, 1, B_arr);
 Matrix C = Matrix(3, 3, C_arr);
 Matrix Q_noise = Matrix(3, 3, Q_noise_arr);
 Matrix R_noise = Matrix(3, 3, R_noise_arr);
