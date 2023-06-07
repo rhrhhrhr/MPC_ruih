@@ -372,7 +372,7 @@ Matrix R_noise = Matrix(3, 3, R_noise_arr);
 KalmanFilter filter = KalmanFilter(state_ini, P_ini, A, B, C, Q_noise, R_noise);
 ```
 ### How to use the KalmanFilter class
-Usually, Kalman filters are used in conjunction with controllers:
+Usually, Kalman filter is used with a controller. The following code shows how to use the MPC controller and Kalman filter:
 ```cpp
 Matrix output = Matrix(ny, 1);
 Matrix state = Matrix(nx, 1);
