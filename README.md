@@ -251,7 +251,7 @@ Matrix c = Matrix(6, 1, c_arr);
 Matrix FN = Matrix(4, 2, FN_arr);
 Matrix cN = Matrix(4, 1, cN_arr);
 
-MPC mpc = MPC(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
+MPCController mpc = MPCController(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
 ```
 ### How to use the MPC class
 You can use the function solver() to solve optimization problems at each sampling period. The input of this function is the system state at the current time, and the output is the system control input. Both variables are of the type Matrix.
@@ -274,7 +274,7 @@ for(;;) {
     state(nx - 1, 0) = sensor_nx_1;
     
     // Calculate the inputs required for the control system
-    input = mpc.Solver(state);
+    input = mpc(state);
     
     // Read the data of the matrix input
     input_0 = input(0, 0);
@@ -355,7 +355,7 @@ Matrix c = Matrix(6, 1, c_arr);
 Matrix FN = Matrix(6, 3, FN_arr);
 Matrix cN = Matrix(6, 1, cN_arr);
 
-MPC mpc = MPC(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
+MPCController mpc = MPCController(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
 
 MatDataType_t state_ini_arr[3] = {0, 0, 0};
 MatDataType_t P_ini_arr[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
@@ -396,7 +396,7 @@ for(;;) {
     state = filter(input, output);
     
     // Calculate the inputs required for the control system
-    input = mpc.Solver(state);
+    input = mpc(state);
     
     // Read the data of the matrix input
     input_0 = input(0, 0);
