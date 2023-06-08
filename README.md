@@ -254,7 +254,7 @@ Matrix cN = Matrix(4, 1, cN_arr);
 MPCController mpc = MPCController(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
 ```
 ### How to use the MPCController class
-You can use the function solver() to solve optimization problems at each sampling period. The input of this function is the system state at the current time, and the output is the system control input. Both variables are of the type Matrix.
+You can use the operator () to solve optimization problems at each sampling period. The input of this function is the system state at the current time, and the output is the system control input. Both variables are of the type Matrix.
 ```cpp
 // Initialize MPC controller
 MatDataType_t L_phi = 9.90287;
