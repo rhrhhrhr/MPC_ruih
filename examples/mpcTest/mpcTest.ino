@@ -36,7 +36,7 @@ void setup() {
     
     // 初始化MPC类
     // Initialize MPC class
-    MPC mpc = MPC(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
+    MPCController mpc = MPCController(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
 
     MatDataType_t state_arr[2] = {1.5, -0.75};
     Matrix state(2, 1, state_arr);
@@ -47,7 +47,7 @@ void setup() {
     Matrix input;
 
     begin = micros();
-    input = mpc.Solver(state);
+    input = mpc(state);
     end = micros();
 
     input.Print();
