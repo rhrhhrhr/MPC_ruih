@@ -3,7 +3,7 @@ Arduino library for linear MPC controller.
 ## References
 This algorithm refers to the article [*`An Accelerated Dual Gradient-Projection Algorithm for Embedded Linear Model Predictive Control`*](https://ieeexplore.ieee.org/document/6426458) by Panagiotis Patrinos and Alberto Bemporad. You can read the [article](https://ieeexplore.ieee.org/document/6426458) for more details.
 ## Usage
-Please see [matrixTest](https://github.com/rhrhhrhr/MPC_ruih/blob/main/examples/matrixTest/matrixTest.ino) if you want to know how to use the Matrix class and see [mpcTest](https://github.com/rhrhhrhr/MPC_ruih/blob/main/examples/mpcTest/mpcTest.ino) for MPC class.
+Please see [matrixTest](https://github.com/rhrhhrhr/MPC_ruih/blob/main/examples/matrixTest/matrixTest.ino) if you want to know how to use the Matrix class and see [mpcTest](https://github.com/rhrhhrhr/MPC_ruih/blob/main/examples/mpcTest/mpcTest.ino) for MPCController class.
 ### Parameters of the Matrix class
 ```cpp
 uint32_t row, column;             // row and column of matrix 矩阵的行和列
@@ -177,7 +177,7 @@ matrix1.Print();
 1 2 
 3 10 
 ```
-### Parameters of the MPC class
+### Parameters of the MPCController class
 ```cpp
 MatDataType_t L_phi, epsilon_V, epsilon_g;
 uint32_t max_iter, N;
@@ -253,9 +253,40 @@ Matrix cN = Matrix(4, 1, cN_arr);
 
 MPCController mpc = MPCController(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
 ```
-### How to use the MPC class
+### How to use the MPCController class
 You can use the function solver() to solve optimization problems at each sampling period. The input of this function is the system state at the current time, and the output is the system control input. Both variables are of the type Matrix.
 ```cpp
+// Initialize MPC controller
+MatDataType_t L_phi = 9.90287;
+MatDataType_t e_V = 0.001;
+MatDataType_t e_g = 0.001;
+uint32_t max_iter = 1000;
+uint32_t N = 5;
+
+MatDataType_t A_arr[4] = {2, 1, 0, 2};
+MatDataType_t B_arr[4] = {1, 0, 0, 1};
+MatDataType_t Q_arr[4] = {1, 0, 0, 3};
+MatDataType_t R_arr[4] = {1, 0, 0, 1};
+MatDataType_t QN_arr[4] = {4.167039, 1.756553, 1.756553, 7.455801};
+MatDataType_t F_arr[12] = {1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+MatDataType_t G_arr[12] = {0.0, 0.0, 0.0, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, -1.0};
+MatDataType_t c_arr[6] = {5, 5, 1, 1, 1, 1};
+MatDataType_t FN_arr[8] = {1.583519, 0.878277, -1.583519, -0.878277, 0.086517, 1.788762, -0.086517, -1.788762};
+MatDataType_t cN_arr[4] = {1.0, 1.0, 1.0, 1.0};
+
+Matrix A = Matrix(2, 2, A_arr);
+Matrix B = Matrix(2, 2, B_arr);
+Matrix Q = Matrix(2, 2, Q_arr);
+Matrix R = Matrix(2, 2, R_arr);
+Matrix QN = Matrix(2, 2, QN_arr);
+Matrix F = Matrix(6, 2, F_arr);
+Matrix G = Matrix(6, 2, G_arr);
+Matrix c = Matrix(6, 1, c_arr);
+Matrix FN = Matrix(4, 2, FN_arr);
+Matrix cN = Matrix(4, 1, cN_arr);
+
+MPCController mpc = MPCController(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
+
 Matrix state = Matrix(nx, 1);
 Matrix input = Matrix(nu, 1);
 
@@ -374,6 +405,51 @@ KalmanFilter filter = KalmanFilter(state_ini, P_ini, A, B, C, Q_noise, R_noise);
 ### How to use the KalmanFilter class
 Usually, Kalman filter is used with a controller. The following code shows how to use the MPC controller and Kalman filter:
 ```cpp
+// Initialize MPC controller and Kalman filter
+MatDataType_t L_phi = 9.90287;
+MatDataType_t e_V = 0.001;
+MatDataType_t e_g = 0.001;
+uint32_t max_iter = 1000;
+uint32_t N = 5;
+
+MatDataType_t A_arr[9] = {1.054036, 0.030319, 7e-06, 3.625607, 1.039288, 0.00047, -3.618468, -0.039246, 0.995571};
+MatDataType_t B_arr[3] = {-0.067516, -2.311213, 13.571525};
+MatDataType_t Q_arr[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+MatDataType_t R_arr[1] = {1};
+MatDataType_t QN_arr[9] = {25986.560619, 2565.143691, 421.750859, 2565.143691, 255.373404, 41.824491, 421.750859, 41.824491, 7.882274};
+MatDataType_t F_arr[18] = {1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+MatDataType_t G_arr[6] = {0.0, 0.0, 0.0, 0.0, 1.0, -1.0};
+MatDataType_t c_arr[6] = {0.261799, 0.261799, 120.0, 120.0, 0.4, 0.4};
+MatDataType_t FN_arr[18] = {1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -7.985989, -0.772787, -0.05362, 7.985989, 0.772787, 0.05362, 1.732671, 0.191389, 0.031859, -1.732671, -0.191389, -0.031859};
+MatDataType_t cN_arr[6] = {0.261799, 0.261799, 0.4, 0.4, 0.4, 0.4};
+
+Matrix A = Matrix(3, 3, A_arr);
+Matrix B = Matrix(3, 1, B_arr);
+Matrix Q = Matrix(3, 3, Q_arr);
+Matrix R = Matrix(1, 1, R_arr);
+Matrix QN = Matrix(3, 3, QN_arr);
+Matrix F = Matrix(6, 3, F_arr);
+Matrix G = Matrix(6, 1, G_arr);
+Matrix c = Matrix(6, 1, c_arr);
+Matrix FN = Matrix(6, 3, FN_arr);
+Matrix cN = Matrix(6, 1, cN_arr);
+
+MPCController mpc = MPCController(L_phi, e_V, e_g, max_iter, N, A, B, Q, R, QN, F, G, c, FN, cN);
+
+MatDataType_t state_ini_arr[3] = {0, 0, 0};
+MatDataType_t P_ini_arr[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+MatDataType_t C_arr[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+MatDataType_t Q_noise_arr[9] = {1000, 0, 0, 0, 0.1, 0, 0, 0, 0.1};
+MatDataType_t R_noise_arr[9] = {0.001, 0, 0, 0, 1, 0, 0, 0, 5};
+
+Matrix state_ini = Matrix(3, 1, state_ini_arr);
+Matrix P_ini = Matrix(3, 3, P_ini_arr);
+Matrix C = Matrix(3, 3, C_arr);
+Matrix Q_noise = Matrix(3, 3, Q_noise_arr);
+Matrix R_noise = Matrix(3, 3, R_noise_arr);
+
+KalmanFilter filter = KalmanFilter(state_ini, P_ini, A, B, C, Q_noise, R_noise);
+
 Matrix output = Matrix(ny, 1);
 Matrix state = Matrix(nx, 1);
 Matrix input = Matrix(nu, 1);
