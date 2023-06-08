@@ -20,7 +20,7 @@ Matrix KalmanFilter::Eye(uint32_t n) {
     return eye;
 }
 
-KalmanFilter::KalmanFilter(Matrix & x_ini, Matrix & P_ini, Matrix & A, Matrix & B, Matrix & C, Matrix & Q, Matrix & R) {
+KalmanFilter::KalmanFilter(Matrix &x_ini, Matrix &P_ini, Matrix &A, Matrix &B, Matrix &C, Matrix &Q, Matrix &R) {
     this->x = x_ini;
     this->P = P_ini;
     this->A = A;
@@ -34,7 +34,7 @@ KalmanFilter::KalmanFilter(Matrix & x_ini, Matrix & P_ini, Matrix & A, Matrix & 
     this->C_T = C.Trans();
 }
 
-Matrix& KalmanFilter::operator()(Matrix & u, Matrix & y) {
+Matrix& KalmanFilter::operator()(Matrix &u, Matrix &y) {
     x_pre = A * x + B * u;
     P_pre = A * P * A_T + Q;
 

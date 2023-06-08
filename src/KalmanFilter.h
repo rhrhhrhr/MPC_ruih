@@ -6,7 +6,6 @@
 #define KALMAN_FILTER_H
 
 #include "Matrix.h"
-#include "MPCConfig.h"
 
 class KalmanFilter {
 private:

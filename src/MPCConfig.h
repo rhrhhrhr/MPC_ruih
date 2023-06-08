@@ -7,23 +7,21 @@
 
 #include <Arduino.h>
 
-// 矩阵元素的数据类型，SINGLE_PRECISION为float，DOUBLE_PRECISION为double
-// The data type of matrix elements, SINGLE_PRECISION for float, DOUBLE_PRECISION for double
-
-#define SINGLE_PRECISION
-
-#ifdef SINGLE_PRECISION
-typedef float MatDataType_t;
-#else
-#ifdef DOUBLE_PRECISION
-typedef double MatDataType_t;
-#endif
-#endif
-
 // 矩阵元素个数的最大值
 // Maximum number of matrix elements
 
+#ifndef MAXSIZE
 #define MAXSIZE 20
+#endif
+
+// 矩阵元素的数据类型，SINGLE_PRECISION为float，DOUBLE_PRECISION为double
+// The data type of matrix elements, SINGLE_PRECISION for float, DOUBLE_PRECISION for double
+
+#ifndef PRECISION_DOUBLE
+typedef float MatDataType_t;
+#else
+typedef double MatDataType_t;
+#endif
 
 // 矩阵乘法的顺序，会影响矩阵计算的速度，在ESP32上测试是jki的顺序最快，和预想不符，具体原因还没有搞清楚，实际使用时可以自己试试哪个快
 // Order of matrix multiplication, it will affect the speed of matrix multiplication

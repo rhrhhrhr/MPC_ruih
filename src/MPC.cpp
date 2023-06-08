@@ -15,7 +15,7 @@
 // @param N                 Prediction horizon
 // @param A, B, Q, R, QN    A, B in the system state space equation and Q, R, QN in the cost function
 // @param F, G, c, FN, cN   State and Input Constraints F * x + G * u <= c, Terminal constraints FN * xN <= cN
-MPC::MPC(MatDataType_t L_phi, MatDataType_t epsilon_V, MatDataType_t epsilon_g, uint32_t max_iter,
+MPCController::MPCController(MatDataType_t L_phi, MatDataType_t epsilon_V, MatDataType_t epsilon_g, uint32_t max_iter,
          uint32_t N, Matrix &A, Matrix &B, Matrix &Q, Matrix &R, Matrix &QN,
          Matrix &F, Matrix &G, Matrix &c, Matrix &FN, Matrix &cN)
 {
@@ -49,15 +49,13 @@ MPC::MPC(MatDataType_t L_phi, MatDataType_t epsilon_V, MatDataType_t epsilon_g, 
     u = new Matrix [N];
     x_bar = new Matrix [N + 1];
     u_bar = new Matrix [N];
-    x_bar_p = new Matrix [N + 1];
-    u_bar_p = new Matrix [N];
 
     FactorIni();
 }
 
 // 释放内存
 // free memory
-MPC::~MPC() {
+MPCController::~MPCController() {
     delete [] K;
     delete [] D;
     delete [] M;
@@ -70,8 +68,6 @@ MPC::~MPC() {
     delete [] u;
     delete [] x_bar;
     delete [] u_bar;
-    delete [] x_bar_p;
-    delete [] u_bar_p;
 
     K = nullptr;
     D = nullptr;
@@ -85,13 +81,11 @@ MPC::~MPC() {
     u = nullptr;
     x_bar = nullptr;
     u_bar = nullptr;
-    x_bar_p = nullptr;
-    u_bar_p = nullptr;
 }
 
 // 初始化求解器需要的矩阵
 // Initialize the matrix required by the solver
-void MPC::FactorIni() {
+void MPCController::FactorIni() {
     Matrix P[N + 1];
     Matrix R_bar[N];
     Matrix S_bar[N];
@@ -125,7 +119,7 @@ void MPC::FactorIni() {
 
 // 求解使对偶问题最小的x, u, 用到了里卡提递归
 // Solve x, u to minimize the dual problem using Riccati recursion
-void MPC::SolveDual(Matrix &state, Matrix *y_, Matrix *x_, Matrix *u_) {
+void MPCController::SolveDual(Matrix &state, Matrix *y_, Matrix *x_, Matrix *u_) {
     Matrix e[N];
 
     e[N - 1] = FN.Trans() * y_[N];
@@ -146,7 +140,7 @@ void MPC::SolveDual(Matrix &state, Matrix *y_, Matrix *x_, Matrix *u_) {
 
 // 状态输入约束g(xi, ui) <= 0
 // State and input constraints g(xi, ui) <= 0
-Matrix MPC::g(Matrix &xk, Matrix &uk) {
+Matrix MPCController::g(Matrix &xk, Matrix &uk) {
 
     Matrix g_k = F * xk + G * uk - c;
 
@@ -155,7 +149,7 @@ Matrix MPC::g(Matrix &xk, Matrix &uk) {
 
 // 终端约束 gN(xN) <= 0
 // Terminal constraints gN(xN) <= 0
-Matrix MPC::gN(Matrix &xN) {
+Matrix MPCController::gN(Matrix &xN) {
     Matrix g_N = FN * xN - cN;
 
     return g_N;
@@ -163,7 +157,7 @@ Matrix MPC::gN(Matrix &xN) {
 
 // 代价函数V(X, U)
 // Cost function V(X, U)
-MatDataType_t MPC::V(Matrix *x_, Matrix *u_) {
+MatDataType_t MPCController::V(Matrix *x_, Matrix *u_) {
     MatDataType_t res;
     Matrix res_mat(1, 1);
 
@@ -181,7 +175,7 @@ MatDataType_t MPC::V(Matrix *x_, Matrix *u_) {
 
 // 对偶问题的值Psi(y, state)
 // The value of the dual problem Psi(y, state)
-MatDataType_t MPC::Psi(Matrix *y_, Matrix &state) {
+MatDataType_t MPCController::Psi(Matrix *y_, Matrix &state) {
     MatDataType_t res;
     Matrix res_mat(1, 1);
 
@@ -204,7 +198,7 @@ MatDataType_t MPC::Psi(Matrix *y_, Matrix &state) {
 
 // 求取g(X, U)中的最大元素(包括g(xi, ui)和gN(xN))
 // Find the maximum value in g (X, U), including g(xi, ui) and gN(xN)
-MatDataType_t MPC::gMax(Matrix *x_, Matrix *u_) {
+MatDataType_t MPCController::gMax(Matrix *x_, Matrix *u_) {
 
     MatDataType_t temp;
     MatDataType_t res = gN(x_[N]).MaxVal();
@@ -220,7 +214,7 @@ MatDataType_t MPC::gMax(Matrix *x_, Matrix *u_) {
 
 // 判断向量w是否所有元素非负
 // Determine if all elements of vector w are nonnegative
-bool MPC::wNonNeg() {
+bool MPCController::wNonNeg() {
     bool res = true;
 
     for(int i = 0; i < N + 1; i++)
@@ -234,7 +228,7 @@ bool MPC::wNonNeg() {
 
 // 判断数值优化是否该停止
 // Determine whether numerical optimization should be stopped
-bool MPC::Stop(Matrix &state) {
+bool MPCController::Stop(Matrix &state) {
     bool res1, res2;
     MatDataType_t temp1, temp2, temp3, max;
     Matrix matTemp;
@@ -260,7 +254,7 @@ bool MPC::Stop(Matrix &state) {
 
 // GPAD算法求解MPC优化问题
 // Using GPAD algorithm to solve MPC optimization problems
-Matrix MPC::Solver(Matrix &state) {
+Matrix MPCController::operator()(Matrix &state) {
 
     int iter = 0;
     MatDataType_t theta = 1;
@@ -272,13 +266,10 @@ Matrix MPC::Solver(Matrix &state) {
     {
         y[i] = Matrix(F.getRow(), 1);
         y_p[i] = Matrix(F.getRow(), 1);
-        x_bar_p[i] = Matrix(A.getCol(), 1);
-        u_bar_p[i] = Matrix(B.getCol(), 1);
     }
 
     y[N] = Matrix(FN.getRow(), 1);
     y_p[N] = Matrix(FN.getRow(), 1);
-    x_bar_p[N] = Matrix(A.getCol(), 1);
 
     // Nesterov’s加速梯度投影法解决线性MPC问题的对偶问题
     // Using Nesterov’s Accelerated Gradient Descent method to solve the dual problem of MPC
@@ -294,27 +285,20 @@ Matrix MPC::Solver(Matrix &state) {
         SolveDual(state, w, x, u);
 
         //求解z_bar用于判断何时停止
-        x_bar[N] = x_bar_p[N] * (1 - theta) + x[N] * theta;
+        x_bar[N] = x_bar[N] * (1 - theta) + x[N] * theta;
 
         for(int i = 0; i < N; i++)
         {
-            x_bar[i] = x_bar_p[i] * (1 - theta) + x[i] * theta;
-            u_bar[i] = u_bar_p[i] * (1 - theta) + u[i] * theta;
+            x_bar[i] = x_bar[i] * (1 - theta) + x[i] * theta;
+            u_bar[i] = u_bar[i] * (1 - theta) + u[i] * theta;
         }
-        //令z_bar_p = z_bar, z_bar_p表示上一时刻的z_bar
-        for(int i = 0; i < N; i++)
-        {
-            x_bar_p[i] = x_bar[i];
-            u_bar_p[i] = u_bar[i];
-        }
-
-        x_bar_p[N] = x_bar[N];
 
         //令y_p = y
         for(int i = 0; i < N + 1; i++)
         {
             y_p[i] = y[i];
         }
+
         //求解下一时刻的y
         y[N] = w[N] + gN(x[N]) * (1 / L_phi);
         y[N] = y[N].NonNegProj();
