@@ -4,17 +4,6 @@
 
 #include "MPC.h"
 
-// 初始参数分别为求解器所需的李普希茨常数(需要单独求), 代价函数误差，约束误差，最大迭代步数，
-// 预测长度，系统状态空间方程中的A，B和代价函数中的Q，R，QN，
-// 状态和输入约束F * x + G * u <= c，终端约束FN * xN <= cN
-// MPC class constructor
-// @param L_phi             Lipschitz constant required by the solver (which needs to be calculated in advance)
-// @param epsilon_V         cost function error
-// @param epsilon_g         constraint error
-// @param max_iter          maximum iteration steps
-// @param N                 Prediction horizon
-// @param A, B, Q, R, QN    A, B in the system state space equation and Q, R, QN in the cost function
-// @param F, G, c, FN, cN   State and Input Constraints F * x + G * u <= c, Terminal constraints FN * xN <= cN
 MPCController::MPCController(MatDataType_t L_phi, MatDataType_t epsilon_V, MatDataType_t epsilon_g, uint32_t max_iter,
          uint32_t N, Matrix &A, Matrix &B, Matrix &Q, Matrix &R, Matrix &QN,
          Matrix &F, Matrix &G, Matrix &c, Matrix &FN, Matrix &cN)
@@ -36,38 +25,79 @@ MPCController::MPCController(MatDataType_t L_phi, MatDataType_t epsilon_V, MatDa
     this->FN = FN;
     this->cN = cN;
 
-    K = new Matrix [N];
-    D = new Matrix [N];
-    M = new Matrix [N];
-    L = new Matrix [N];
-    C = new Matrix [N];
+    K = new Matrix[N];
+    D = new Matrix[N];
+    M = new Matrix[N];
+    L = new Matrix[N];
+    C = new Matrix[N];
 
-    y = new Matrix [N + 1];
-    y_p = new Matrix [N + 1];
-    w = new Matrix [N + 1];
-    x = new Matrix [N + 1];
-    u = new Matrix [N];
-    x_bar = new Matrix [N + 1];
-    u_bar = new Matrix [N];
+    y = new Matrix[N + 1];
+    y_p = new Matrix[N + 1];
+    w = new Matrix[N + 1];
+    x = new Matrix[N + 1];
+    u = new Matrix[N];
+    x_bar = new Matrix[N + 1];
+    u_bar = new Matrix[N];
 
     FactorIni();
+}
+
+MPCController::MPCController(const MPCController &mpc) {
+    L_phi = mpc.L_phi;
+    epsilon_V = mpc.epsilon_V;
+    epsilon_g = mpc.epsilon_g;
+    max_iter = mpc.max_iter;
+    N = mpc.N;
+
+    A = mpc.A;
+    B = mpc.B;
+    Q = mpc.Q;
+    R = mpc.R;
+    QN = mpc.QN;
+    F = mpc.F;
+    G = mpc.G;
+    c = mpc.c;
+    FN = mpc.FN;
+    cN = mpc.cN;
+
+    K = new Matrix[mpc.N];
+    D = new Matrix[mpc.N];
+    M = new Matrix[mpc.N];
+    L = new Matrix[mpc.N];
+    C = new Matrix[mpc.N];
+
+    for(int i = 0; i < mpc.N; i++) {
+        K[i] = mpc.K[i];
+        D[i] = mpc.D[i];
+        M[i] = mpc.M[i];
+        L[i] = mpc.L[i];
+        C[i] = mpc.C[i];
+    }
+
+    y = new Matrix[mpc.N + 1];
+    y_p = new Matrix[mpc.N + 1];
+    w = new Matrix[mpc.N + 1];
+    x = new Matrix[mpc.N + 1];
+    u = new Matrix[mpc.N];
+    x_bar = new Matrix[mpc.N + 1];
+    u_bar = new Matrix[mpc.N];
 }
 
 // 释放内存
 // free memory
 MPCController::~MPCController() {
-    delete [] K;
-    delete [] D;
-    delete [] M;
-    delete [] L;
-    delete [] C;
-    delete [] y;
-    delete [] y_p;
-    delete [] w;
-    delete [] x;
-    delete [] u;
-    delete [] x_bar;
-    delete [] u_bar;
+    delete[] K;
+    delete[] D;
+    delete[] M;
+    delete[] L;
+    delete[] C;
+    delete[] y;
+    delete[] y_p;
+    delete[] w;
+    delete[] x;
+    delete[] u;
+    delete[] x_bar;
+    delete[] u_bar;
 
     K = nullptr;
     D = nullptr;
@@ -83,8 +113,6 @@ MPCController::~MPCController() {
     u_bar = nullptr;
 }
 
-// 初始化求解器需要的矩阵
-// Initialize the matrix required by the solver
 void MPCController::FactorIni() {
     Matrix P[N + 1];
     Matrix R_bar[N];
@@ -138,8 +166,6 @@ void MPCController::SolveDual(Matrix &state, Matrix *y_, Matrix *x_, Matrix *u_)
     }
 }
 
-// 状态输入约束g(xi, ui) <= 0
-// State and input constraints g(xi, ui) <= 0
 Matrix MPCController::g(Matrix &xk, Matrix &uk) {
 
     Matrix g_k = F * xk + G * uk - c;
@@ -147,16 +173,26 @@ Matrix MPCController::g(Matrix &xk, Matrix &uk) {
     return g_k;
 }
 
-// 终端约束 gN(xN) <= 0
-// Terminal constraints gN(xN) <= 0
 Matrix MPCController::gN(Matrix &xN) {
     Matrix g_N = FN * xN - cN;
 
     return g_N;
 }
 
-// 代价函数V(X, U)
-// Cost function V(X, U)
+MatDataType_t MPCController::gMax(Matrix *x_, Matrix *u_) {
+
+    MatDataType_t temp;
+    MatDataType_t res = gN(x_[N]).MaxVal();
+
+    for(int k = 0; k < N; k++)
+    {
+        temp = g(x_[k], u_[k]).MaxVal();
+        res = res > temp ? res : temp;
+    }
+
+    return res;
+}
+
 MatDataType_t MPCController::V(Matrix *x_, Matrix *u_) {
     MatDataType_t res;
     Matrix res_mat(1, 1);
@@ -173,9 +209,7 @@ MatDataType_t MPCController::V(Matrix *x_, Matrix *u_) {
     return res;
 }
 
-// 对偶问题的值Psi(y, state)
-// The value of the dual problem Psi(y, state)
-MatDataType_t MPCController::Psi(Matrix *y_, Matrix &state) {
+MatDataType_t MPCController::Psi(Matrix &state, Matrix *y_) {
     MatDataType_t res;
     Matrix res_mat(1, 1);
 
@@ -196,24 +230,6 @@ MatDataType_t MPCController::Psi(Matrix *y_, Matrix &state) {
     return res;
 }
 
-// 求取g(X, U)中的最大元素(包括g(xi, ui)和gN(xN))
-// Find the maximum value in g (X, U), including g(xi, ui) and gN(xN)
-MatDataType_t MPCController::gMax(Matrix *x_, Matrix *u_) {
-
-    MatDataType_t temp;
-    MatDataType_t res = gN(x_[N]).MaxVal();
-
-    for(int k = 0; k < N; k++)
-    {
-        temp = g(x_[k], u_[k]).MaxVal();
-        res = res > temp ? res : temp;
-    }
-
-    return res;
-}
-
-// 判断向量w是否所有元素非负
-// Determine if all elements of vector w are nonnegative
 bool MPCController::wNonNeg() {
     bool res = true;
 
@@ -226,8 +242,6 @@ bool MPCController::wNonNeg() {
     return res;
 }
 
-// 判断数值优化是否该停止
-// Determine whether numerical optimization should be stopped
 bool MPCController::Stop(Matrix &state) {
     bool res1, res2;
     MatDataType_t temp1, temp2, temp3, max;
@@ -242,7 +256,7 @@ bool MPCController::Stop(Matrix &state) {
 
     temp1 = -matTemp(0, 0);
     temp2 = V(x, u);
-    temp3 = Psi(y, state);
+    temp3 = Psi(state, y);
 
     max = temp3 > 1 ? temp3 : 1;
 
@@ -331,4 +345,62 @@ Matrix MPCController::operator()(Matrix &state) {
     }
 
     return u[0];
+}
+
+MPCController &MPCController::operator=(const MPCController &mpc) {
+    if(this != &mpc) {
+        L_phi = mpc.L_phi;
+        epsilon_V = mpc.epsilon_V;
+        epsilon_g = mpc.epsilon_g;
+        max_iter = mpc.max_iter;
+        N = mpc.N;
+
+        A = mpc.A;
+        B = mpc.B;
+        Q = mpc.Q;
+        R = mpc.R;
+        QN = mpc.QN;
+        F = mpc.F;
+        G = mpc.G;
+        c = mpc.c;
+        FN = mpc.FN;
+        cN = mpc.cN;
+
+        delete[] K;
+        delete[] D;
+        delete[] M;
+        delete[] L;
+        delete[] C;
+        delete[] y;
+        delete[] y_p;
+        delete[] w;
+        delete[] x;
+        delete[] u;
+        delete[] x_bar;
+        delete[] u_bar;
+
+        K = new Matrix[mpc.N];
+        D = new Matrix[mpc.N];
+        M = new Matrix[mpc.N];
+        L = new Matrix[mpc.N];
+        C = new Matrix[mpc.N];
+
+        for(int i = 0; i < mpc.N; i++) {
+            K[i] = mpc.K[i];
+            D[i] = mpc.D[i];
+            M[i] = mpc.M[i];
+            L[i] = mpc.L[i];
+            C[i] = mpc.C[i];
+        }
+
+        y = new Matrix[mpc.N + 1];
+        y_p = new Matrix[mpc.N + 1];
+        w = new Matrix[mpc.N + 1];
+        x = new Matrix[mpc.N + 1];
+        u = new Matrix[mpc.N];
+        x_bar = new Matrix[mpc.N + 1];
+        u_bar = new Matrix[mpc.N];
+    }
+
+    return *this;
 }
