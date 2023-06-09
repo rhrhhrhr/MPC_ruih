@@ -61,7 +61,7 @@ mat.Print();
 1 2 
 3 4 
 ```
-Note that this method can only be used when the row and column of the matrix have been determined, or the assignment won't success. The same data with different rows and columns will represent different matrices.<br><br>
+Note that the same data with different rows and columns will represent different matrices.<br><br>
 **code:**
 ```cpp
 MatDataType_t arr[4] = {1, 2, 3, 4};
