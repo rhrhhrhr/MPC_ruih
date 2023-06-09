@@ -23,6 +23,19 @@ mat.Print();
 ```cpp
 0
 ```
+#### With positive integer n
+This operation will generate an an n-dimensional identity matrix<br><br>
+**code:**
+```cpp
+Matrix mat = Matrix(3);
+mat.Print();
+```
+**result:**
+```cpp
+1 0 0
+0 1 0
+0 0 1
+```
 #### With row and column
 This operation will generate an all zero matrix with the corresponding row and column<br><br>
 **code:**
